@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { SiteShell } from "@/components/layout/site-shell";
 import { getCurrentUser } from "@/lib/auth/user";
 import "./globals.css";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const InterSans = Inter({
+    variable: "--font-Inter-sans",
     subsets: ["latin"],
 });
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
     const user = await getCurrentUser();
     return (
-        <html lang="fr" className={`${geistSans.variable} h-full antialiased`}>
+        <html lang="fr" className={`${InterSans.variable} h-full antialiased`}>
             <body>
                 <SiteShell user={user}>{children}</SiteShell>
             </body>
