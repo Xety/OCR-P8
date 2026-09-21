@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { PropertySummary } from "@/lib/properties/validation";
+import { getPropertyHref } from "@/lib/properties/routes";
 import { HeartIcon } from "@/components/ui/icons/heart-icon";
 
 export function PropertyCard({ property }: { property: PropertySummary }) {
-    const propertyHref = `/properties/${property.slug}`;
+    const propertyHref = getPropertyHref(property);
     const imageAlt = property.location
         ? `Photo du logement « ${property.title} » à ${property.location}`
         : `Photo du logement « ${property.title} »`;

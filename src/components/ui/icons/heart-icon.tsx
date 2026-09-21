@@ -3,6 +3,14 @@ type HeartIconProps = {
     filled?: boolean;
 };
 
+/**
+ * Affiche l'icône de cœur, utilisée pour les favoris.
+ *
+ * @param className La classe CSS à appliquer à l'icône.
+ * @param filled Indique si le cœur est rempli ou non.
+ *
+ * @returns
+ */
 export function HeartIcon({ className = "size-5", filled = false }: HeartIconProps) {
     return (
         <svg

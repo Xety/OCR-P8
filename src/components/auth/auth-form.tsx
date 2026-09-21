@@ -30,7 +30,7 @@ export function LoginForm() {
                     {pending ? "Connexion…" : "Se connecter"}
                 </Button>
                 <Button type="button" variant="text" onClick={() => setForgotMessage(true)}>Mot de passe oublié</Button>
-                {forgotMessage && <p role="status" className="text-sm">La réinitialisation du mot de passe sera disponible dans un prochain lot.</p>}
+                {forgotMessage && <p role="status" className="text-sm">La réinitialisation du mot de passe sera disponible prochainement.</p>}
                 <p className="text-[#97391f]">Pas encore de compte ? <Link href="/signup" className="font-medium hover:underline">Inscrivez-vous</Link></p>
             </div>
         </form>
