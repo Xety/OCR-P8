@@ -26,7 +26,7 @@ jobs:
         run: npm install --global npm@11.6.2
 
       - name: Installer les dépendances
-        run: npm ci
+        run: npm install
 
       - name: Exécuter les tests
         run: npm test
