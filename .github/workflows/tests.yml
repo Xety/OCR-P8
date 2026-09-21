@@ -22,6 +22,9 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Configurer npm
+        run: npm install --global npm@11.6.2
+
       - name: Installer les dépendances
         run: npm ci
 
