@@ -9,6 +9,7 @@ import { parsePropertyReference } from "@/lib/properties/routes";
 import { PropertyTags } from "@/components/ui/property-tags";
 import { LocationIcon } from "@/components/ui/icons/location-icon";
 import { StarIcon } from "@/components/ui/icons/star-icon";
+import { getCurrentUser } from "@/lib/auth/user";
 
 /**
  * Affiche la page d'un logement spécifique, incluant la galerie d'images, les détails du logement et les informations sur l'hôte.
@@ -30,6 +31,8 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
     if (!property) {
         notFound();
     }
+
+    const messageHref = (await getCurrentUser()) ? `/messages?property=${property.id}` : "/login";
 
     // Prépare les images à afficher dans le carrousel, en s'assurant que la couverture est en première position et en éliminant les doublons.
     const picturesWithCover = property.cover
@@ -115,10 +118,10 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
                     </div>
 
                     <div className="mt-6 space-y-2">
-                        <Button href={`/messages?property=${property.id}`} className="inline-flex w-full justify-center py-2.5">
+                        <Button href={messageHref} className="inline-flex w-full justify-center py-2.5">
                             Contacter l’hôte
                         </Button>
-                        <Button href={`/messages?property=${property.id}`} className="inline-flex w-full justify-center py-2.5">
+                        <Button href={messageHref} className="inline-flex w-full justify-center py-2.5">
                             Envoyer un message
                         </Button>
                     </div>
