@@ -66,7 +66,7 @@ export default async function HomePage() {
                     Aucun logement n’est disponible pour le moment.
                 </p>
             ) : (
-                <section className="mt-11 grid gap-11 lg:mt-14 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-8" aria-label="Logements à découvrir">
+                <section className="mt-11 grid gap-11 sm:grid-cols-2 lg:mt-21 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-8" aria-label="Logements à découvrir">
                     {properties.map((property) => <PropertyCard key={property.id} property={property} />)}
                 </section>
             )}

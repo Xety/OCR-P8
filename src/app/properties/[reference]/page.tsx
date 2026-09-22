@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCarousel } from "@/components/properties/property-carousel";
+import { FavoriteButton } from "@/components/favorites/favorite-button";
 import { Button } from "@/components/ui/button";
 import { getPropertyById } from "@/lib/properties/properties";
 import { parsePropertyReference } from "@/lib/properties/routes";
@@ -56,7 +57,10 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
                     <PropertyCarousel images={pictures} propertyTitle={property.title} />
 
                     <article className="mt-3 rounded-xl border border-[#ececec] bg-white px-6 py-7 lg:mt-5 lg:px-5">
-                        <h1 className="text-2xl font-medium lg:text-[26px]">{property.title}</h1>
+                        <div className="flex items-start justify-between gap-4">
+                            <h1 className="text-2xl font-medium lg:text-[26px]">{property.title}</h1>
+                            <FavoriteButton propertyId={property.id} propertyTitle={property.title} />
+                        </div>
                         {property.location && (
                             <p className="mt-4 flex items-center gap-2 text-sm text-[#65696c]">
                                 <LocationIcon />

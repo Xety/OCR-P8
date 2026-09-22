@@ -77,9 +77,21 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
                 </div>
                 {open && (
                     <nav id="mobile-navigation" aria-label="Navigation mobile" className="px-4 pb-6 lg:hidden">
-                        {navLinks.map(({ href, label }) => <Link key={href} href={href} onClick={() => setOpen(false)} className="block border-b border-[#efefef] py-6 text-2xl hover:text-[#9b381e]">{label}</Link>)}
-                        {showAdd && <Link href={addHref} onClick={() => setOpen(false)} className="mt-6 inline-flex min-w-52 justify-center rounded-lg bg-[#97391f] px-5 py-2 text-white hover:bg-[#7d2e18]">Ajouter un logement</Link>}
-                        {user && <form action={logoutAction} className="mt-6"><button type="submit" className="text-[#97391f] hover:underline">Déconnexion</button></form>}
+                        {navLinks.map(({ href, label }) =>
+                            <Link key={href} href={href} onClick={() => setOpen(false)} className="block border-b border-[#efefef] py-6 text-2xl hover:text-[#9b381e]">
+                                {label}
+                            </Link>
+                        )}
+                        {showAdd &&
+                            <Link href={addHref} onClick={() => setOpen(false)} className="mt-6 inline-flex min-w-52 justify-center rounded-lg bg-[#97391f] px-5 py-2 text-white hover:bg-[#7d2e18]">Ajouter un logement</Link>
+                        }
+                        {user &&
+                            <form action={logoutAction} className="mt-6">
+                                <button type="submit" className="text-[#97391f] hover:underline">
+                                    Déconnexion
+                                </button>
+                            </form>
+                        }
                     </nav>
                 )}
             </div>
