@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
 
 const STORAGE_KEY = "kasa:favorites";
+const FAVORITES_UPDATED_EVENT = "kasa:favorites-updated";
 const EMPTY_FAVORITES: string[] = [];
 
 type FavoritesContextValue = {
@@ -54,38 +55,46 @@ function parseFavoriteIds(value: string | null): string[] {
 }
 
 /**
- * Lit les favoris depuis le localStorage.
+ * Lit la valeur brute des favoris depuis le localStorage.
  *
- * @return Un tableau d'IDs uniques, ou un tableau vide si le localStorage est vide ou invalide.
+ * @return La valeur enregistrée, ou null si le stockage est vide ou indisponible.
  */
-function readFavorites(): string[] {
+function readStoredFavorites(): string | null {
     try {
-        return parseFavoriteIds(window.localStorage.getItem(STORAGE_KEY));
+        return window.localStorage.getItem(STORAGE_KEY);
     } catch {
-        return EMPTY_FAVORITES;
+        return null;
     }
 }
 
+/**
+ * Abonne un callback aux changements de favoris, que ce soit dans le même onglet ou dans d'autres.
+ *
+ * @param onChange Le callback à exécuter lorsque les favoris changent.
+ *
+ * @returns Une fonction de désabonnement à appeler pour arrêter d'écouter les changements.
+ */
+function subscribeToFavorites(onChange: () => void) {
+    // L'événement storage est émis dans les autres onglets, pas dans celui qui écrit.
+    const onStorage = (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY || event.key === null) {
+            onChange();
+        }
+    };
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(FAVORITES_UPDATED_EVENT, onChange);
+
+    return () => {
+        window.removeEventListener("storage", onStorage);
+        window.removeEventListener(FAVORITES_UPDATED_EVENT, onChange);
+    };
+}
+
 export function FavoritesProvider({ children, isAuthenticated }: { children: ReactNode; isAuthenticated: boolean }) {
-    // null assure un premier rendu identique sur le serveur et dans le navigateur.
-    const [favoriteIds, setFavoriteIds] = useState<string[] | null>(null);
-
-    // Lit les favoris au premier rendu et synchronise les changements de localStorage entre plusieurs onglets.
-    useEffect(() => {
-        // Lecture après hydratation pour garder le même premier rendu sur le serveur et le navigateur.
-        setFavoriteIds(readFavorites());
-
-        // On écoute les changements de localStorage pour synchroniser les favoris entre plusieurs onglets.
-        const onStorage = (event: StorageEvent) => {
-            if (event.key === STORAGE_KEY || event.key === null) {
-                setFavoriteIds(readFavorites());
-            }
-        };
-
-        window.addEventListener("storage", onStorage);
-
-        return () => window.removeEventListener("storage", onStorage);
-    }, []);
+    // Utilise useSyncExternalStore pour suivre les changements de favoris dans le localStorage et entre les onglets.
+    const storedFavorites = useSyncExternalStore(subscribeToFavorites, readStoredFavorites, () => undefined);
+    const favoriteIds = storedFavorites === undefined ? null : parseFavoriteIds(storedFavorites);
 
     // Ajoute ou retire un ID de la liste des favoris et met à jour le localStorage.
     function toggleFavorite(id: string) {
@@ -93,7 +102,7 @@ export function FavoritesProvider({ children, isAuthenticated }: { children: Rea
             return
         };
 
-        const favorites = readFavorites();
+        const favorites = parseFavoriteIds(readStoredFavorites());
         // Si l'ID est déjà présent, on le retire ; sinon, on l'ajoute.
         const updatedFavorites = favorites.includes(id)
             ? favorites.filter((favoriteId) => favoriteId !== id)
@@ -101,8 +110,7 @@ export function FavoritesProvider({ children, isAuthenticated }: { children: Rea
 
         try {
             window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
-
-            setFavoriteIds(updatedFavorites);
+            window.dispatchEvent(new Event(FAVORITES_UPDATED_EVENT));
         } catch {
             // Si le stockage est indisponible, les favoris restent inchangés.
         }
