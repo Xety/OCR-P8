@@ -27,7 +27,9 @@ export function FavoritesGrid({ properties }: { properties: PropertySummary[] })
 
     return (
         <section className="mt-12 grid gap-8 sm:grid-cols-2 lg:mt-21 lg:grid-cols-3" aria-label="Mes logements favoris">
-            {favorites.map((property) => <PropertyCard key={property.id} property={property} />)}
+            {favorites.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+            ))}
         </section>
     );
 }
