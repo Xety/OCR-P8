@@ -46,26 +46,26 @@ export function DesktopPropertyLightbox({
         document.body.style.overflow = "hidden";
         closeButtonRef.current?.focus();
 
-        /** Navigue dans la lightbox, la ferme et maintient le focus dans la modale. */
+        // Navigue dans la lightbox, la ferme et maintient le focus dans la modale.
         const handleDocumentKeyDown = (event: KeyboardEvent) => {
+            const movements: Partial<Record<string, number>> = {
+                ArrowLeft: -1,
+                ArrowRight: 1,
+            };
+            const movement = movements[event.key];
+
             if (event.key === "Escape") {
                 event.preventDefault();
                 onClose();
-            } else if (hasNavigation && event.key === "ArrowLeft") {
+            } else if (hasNavigation && movement !== undefined) {
                 event.preventDefault();
-                setCurrentIndex((index) => wrapCarouselIndex(index - 1, imageCount));
-            } else if (hasNavigation && event.key === "ArrowRight") {
-                event.preventDefault();
-                setCurrentIndex((index) => wrapCarouselIndex(index + 1, imageCount));
-            } else if (hasNavigation && event.key === "Home") {
-                event.preventDefault();
-                setCurrentIndex(0);
-            } else if (hasNavigation && event.key === "End") {
-                event.preventDefault();
-                setCurrentIndex(imageCount - 1);
+                setCurrentIndex((index) => wrapCarouselIndex(index + movement, imageCount));
             } else if (event.key === "Tab") {
                 const focusableElements = dialogRef.current?.querySelectorAll<HTMLElement>("button");
-                if (!focusableElements?.length) return;
+
+                if (!focusableElements?.length) {
+                    return
+                };
 
                 const firstElement = focusableElements[0];
                 const lastElement = focusableElements[focusableElements.length - 1];

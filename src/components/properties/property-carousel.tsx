@@ -27,12 +27,12 @@ type LightboxState = {
 export function PropertyCarousel({ images, propertyTitle }: PropertyCarouselProps) {
     const [lightbox, setLightbox] = useState<LightboxState>(null);
 
-    /** Ouvre la lightbox sur l'image sélectionnée et mémorise le bouton déclencheur. */
+    // Ouvre la lightbox sur l'image sélectionnée et mémorise le bouton déclencheur.
     const openLightbox = useCallback((initialIndex: number, trigger: HTMLButtonElement) => {
         setLightbox({ initialIndex, trigger });
     }, []);
 
-    /** Ferme la lightbox ; celle-ci rend ensuite le focus à son bouton déclencheur. */
+    // Ferme la lightbox ; celle-ci rend ensuite le focus à son bouton déclencheur.
     const closeLightbox = useCallback(() => {
         setLightbox(null);
     }, []);

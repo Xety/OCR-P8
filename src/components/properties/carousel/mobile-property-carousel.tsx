@@ -21,20 +21,18 @@ export function MobilePropertyCarousel({ images, propertyTitle }: MobileProperty
     const imageCount = images.length;
     const hasNavigation = imageCount > 1;
 
-    /** Sélectionne une image en bouclant entre la première et la dernière. */
+    // Sélectionne une image en bouclant entre la première et la dernière.
     const showImage = (index: number) => {
         setCurrentIndex(wrapCarouselIndex(index, imageCount));
     };
 
-    /** Permet de naviguer avec les flèches du clavier ainsi qu'avec Home et End. */
+    // Permet de naviguer avec les flèches du clavier.
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (!hasNavigation) return;
 
         const destinations: Partial<Record<string, number>> = {
             ArrowLeft: currentIndex - 1,
-            ArrowRight: currentIndex + 1,
-            Home: 0,
-            End: imageCount - 1,
+            ArrowRight: currentIndex + 1
         };
         const destination = destinations[event.key];
 
