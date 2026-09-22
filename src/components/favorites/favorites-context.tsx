@@ -6,6 +6,7 @@ const STORAGE_KEY = "kasa:favorites";
 const EMPTY_FAVORITES: string[] = [];
 
 type FavoritesContextValue = {
+    isAuthenticated: boolean;
     favoriteIds: string[] | null;
     isFavorite: (id: string) => boolean;
     toggleFavorite: (id: string) => void;
@@ -65,13 +66,13 @@ function readFavorites(): string[] {
     }
 }
 
-export function FavoritesProvider({ children }: { children: ReactNode }) {
+export function FavoritesProvider({ children, isAuthenticated }: { children: ReactNode; isAuthenticated: boolean }) {
     // null assure un premier rendu identique sur le serveur et dans le navigateur.
     const [favoriteIds, setFavoriteIds] = useState<string[] | null>(null);
 
     // Lit les favoris au premier rendu et synchronise les changements de localStorage entre plusieurs onglets.
     useEffect(() => {
-        // On le lit seulement après le premier rendu.
+        // Lecture après hydratation pour garder le même premier rendu sur le serveur et le navigateur.
         setFavoriteIds(readFavorites());
 
         // On écoute les changements de localStorage pour synchroniser les favoris entre plusieurs onglets.
@@ -88,7 +89,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
     // Ajoute ou retire un ID de la liste des favoris et met à jour le localStorage.
     function toggleFavorite(id: string) {
-        if (!id) {
+        if (!isAuthenticated || !id) {
             return
         };
 
@@ -108,8 +109,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     }
 
     const value: FavoritesContextValue = {
+        isAuthenticated,
         favoriteIds,
-        isFavorite: (id) => favoriteIds?.includes(id) ?? false,
+        isFavorite: (id) => isAuthenticated && (favoriteIds?.includes(id) ?? false),
         toggleFavorite,
     };
 

@@ -33,9 +33,9 @@ afterEach(() => {
 });
 
 // On teste le composant complet avec le contexte pour vérifier l'interaction entre les boutons et la grille de favoris.
-function renderFavorites() {
+function renderFavorites(isAuthenticated = true) {
     return render(
-        <FavoritesProvider>
+        <FavoritesProvider isAuthenticated={isAuthenticated}>
             <FavoriteButton propertyId="a" propertyTitle="Appartement" />
             <FavoriteButton propertyId="b" propertyTitle="Chalet" />
             <FavoritesGrid properties={properties} />
@@ -44,6 +44,15 @@ function renderFavorites() {
 }
 
 describe("favoris locaux", () => {
+    it("redirige un visiteur vers la connexion sans ajouter de favori", () => {
+        renderFavorites(false);
+
+        const loginLink = screen.getByRole("link", { name: "Se connecter pour ajouter Appartement aux favoris" });
+        expect(loginLink.getAttribute("href")).toBe("/login");
+        expect(screen.queryByRole("button", { name: "Ajouter Appartement aux favoris" })).toBeNull();
+        expect(localStorage.getItem("kasa:favorites")).toBeNull();
+    });
+
     it("affiche un état vide quand aucun favori n'est enregistré", () => {
         renderFavorites();
 

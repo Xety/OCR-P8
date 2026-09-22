@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { FavoritesGrid } from "@/components/favorites/favorites-grid";
+import { getCurrentUser } from "@/lib/auth/user";
 import { getProperties } from "@/lib/properties/properties";
 import type { PropertySummary } from "@/lib/properties/validation";
 
@@ -8,6 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function FavoritesPage() {
+    if (!(await getCurrentUser())) {
+        redirect("/login");
+    }
+
     let properties: PropertySummary[] = [];
     let loadingError = false;
 
