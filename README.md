@@ -1,58 +1,47 @@
-# Kasa
+# Kasa — Frontend
 
-Kasa est une application de consultation de logements. Le projet est composé de deux parties :
-
-- [`OCR-P8`](https://github.com/Xety/OCR-P8) : frontend développé avec Next.js ;
-- [`P8BACKEND`](https://github.com/OpenClassrooms-Student-Center/dev-react-P12) : API développée avec Express et SQLite.
+Frontend de l'application Kasa, développé avec Next.js, React et TypeScript.
 
 ## Prérequis
 
-- Node.js 22.9 ou supérieur ;
-- npm 11.6.2 ;
-- Git.
+- Node.js 22 ou supérieur
+- npm
+- Git
 
-Les deux projets doivent être installés séparément.
+## Installation
 
-## Installation du backend
-
-Les instructions d'installation se trouvent dans le [README de P8BACKEND](https://github.com/OpenClassrooms-Student-Center/dev-react-P12). En local, démarrer l'API avec `PORT=8000` et définir un `JWT_SECRET` distinct du secret de production.
-
-## Installation du frontend
-
-Cloner le frontend :
+Cloner le projet puis installer les dépendances :
 
 ```bash
 git clone https://github.com/Xety/OCR-P8.git
+cd OCR-P8
+npm install
 ```
 
-Depuis le dossier `OCR-P8` :
-
-```bash
-npm ci
-```
-
-Copier `.env.example` vers `.env.local` et conserver l'URL du backend local :
+Copier `.env.example` dans un fichier `.env.local` :
 
 ```dotenv
 API_BASE_URL=http://localhost:8000
+SITE_URL=http://localhost:3000
 ```
 
-Démarrer le frontend :
+Démarrer le serveur de développement :
 
 ```bash
 npm run dev
 ```
 
-L'application est disponible sur `http://localhost:3000`.
+L'application est ensuite disponible sur [http://localhost:3000](http://localhost:3000).
 
-## Vérifications
-
-Depuis le dossier `OCR-P8` :
+## Commandes utiles
 
 ```bash
-npm test
-npm run lint
-npm run build
+npm test          # Exécuter les tests
+npm run coverage  # Générer le rapport de couverture
+npm run lint      # Vérifier le code avec ESLint
+npm run build     # Créer la version de production
 ```
 
-La CI GitHub Actions lance les tests Vitest à chaque push et pull request.
+## Backend
+
+[Dépôt GitHub de P8BACKEND](https://github.com/OpenClassrooms-Student-Center/dev-react-P12) pour l'installation du backend.
