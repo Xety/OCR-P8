@@ -39,12 +39,14 @@ function parseFavoriteIds(value: string | null): string[] {
         const uniqueIds: string[] = [];
 
         for (const id of parsed) {
-            if (typeof id !== "string" || id.length === 0) {
+            if (typeof id !== "string") {
                 continue;
             }
 
-            if (!uniqueIds.includes(id)) {
-                uniqueIds.push(id);
+            const normalizedId = id.trim();
+
+            if (!uniqueIds.includes(normalizedId)) {
+                uniqueIds.push(normalizedId);
             }
         }
 
