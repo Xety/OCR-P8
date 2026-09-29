@@ -11,7 +11,6 @@ export default function NotFound() {
             </p>
             <nav aria-label="Quitter la page introuvable" className="mt-12 flex flex-col gap-4">
                 <Button href="/" className="inline-flex w-59 justify-center leading-5">Accueil</Button>
-                <Button href="/properties" className="inline-flex w-59 justify-center leading-5">Logements</Button>
             </nav>
         </main>
     );
