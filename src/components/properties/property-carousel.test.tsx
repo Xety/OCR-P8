@@ -65,6 +65,32 @@ describe("PropertyCarousel", () => {
         expect(screen.getByRole("img", { name: /Photo 1 sur 3/ }).getAttribute("src")).toBe("/one.jpg");
     });
 
+    // Teste la navigation clavier et ignore les touches qui ne correspondent pas aux flèches.
+    it("navigue dans le carrousel mobile avec les flèches du clavier", () => {
+        render(<PropertyCarousel images={images} propertyTitle="Appartement cosy" />);
+
+        const carousel = screen.getByRole("region", { name: "Photos de Appartement cosy" });
+
+        expect(fireEvent.keyDown(carousel, { key: "Enter" })).toBe(true);
+        expect(screen.getByRole("img", { name: /Photo 1 sur 3/ }).getAttribute("src")).toBe("/one.jpg");
+
+        expect(fireEvent.keyDown(carousel, { key: "ArrowRight" })).toBe(false);
+        expect(screen.getByRole("img", { name: /Photo 2 sur 3/ }).getAttribute("src")).toBe("/two.jpg");
+
+        expect(fireEvent.keyDown(carousel, { key: "ArrowLeft" })).toBe(false);
+        expect(screen.getByRole("img", { name: /Photo 1 sur 3/ }).getAttribute("src")).toBe("/one.jpg");
+    });
+
+    // Vérifie que le clavier ne déclenche aucune navigation lorsqu'une seule image est disponible.
+    it("ignore les flèches du clavier sans navigation mobile", () => {
+        render(<PropertyCarousel images={[images[0]]} propertyTitle="Appartement cosy" />);
+
+        const carousel = screen.getByRole("region", { name: "Photos de Appartement cosy" });
+
+        expect(fireEvent.keyDown(carousel, { key: "ArrowRight" })).toBe(true);
+        expect(screen.getByRole("img", { name: /Photo 1 sur 1/ }).getAttribute("src")).toBe("/one.jpg");
+    });
+
     // Teste la navigation entre les images avec les boutons "précédent" et "suivant" sur desktop.
     it("boucle entre la première et la dernière image sur desktop", async () => {
         const user = userEvent.setup();
@@ -101,5 +127,36 @@ describe("PropertyCarousel", () => {
 
         fireEvent.keyDown(document, { key: "Escape" });
         expect(screen.queryByRole("dialog", { name: "Galerie agrandie de Appartement cosy" })).toBeNull();
+    });
+
+    // Vérifie que le focus reste dans la lightbox et revient au bouton déclencheur à sa fermeture.
+    it("boucle le focus dans la lightbox avec Tab", async () => {
+        const user = userEvent.setup();
+        render(<PropertyCarousel images={images} propertyTitle="Appartement cosy" />);
+
+        const trigger = screen.getByRole("button", { name: "Agrandir la photo 2 sur 3" });
+        await user.click(trigger);
+
+        const dialog = screen.getByRole("dialog", { name: "Galerie agrandie de Appartement cosy" });
+        const closeButton = screen.getByRole("button", { name: "Fermer la galerie" });
+        const lastButton = screen.getByRole("button", { name: "Image suivante dans la galerie agrandie" });
+
+        expect(document.activeElement).toBe(closeButton);
+
+        const focusableElementsSpy = vi.spyOn(dialog, "querySelectorAll");
+        focusableElementsSpy.mockReturnValueOnce([] as unknown as NodeListOf<Element>);
+        const tabWithoutControls = new KeyboardEvent("keydown", { key: "Tab", cancelable: true });
+        document.dispatchEvent(tabWithoutControls);
+        expect(tabWithoutControls.defaultPrevented).toBe(false);
+        focusableElementsSpy.mockRestore();
+
+        fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+        expect(document.activeElement).toBe(lastButton);
+
+        fireEvent.keyDown(document, { key: "Tab" });
+        expect(document.activeElement).toBe(closeButton);
+
+        await user.click(closeButton);
+        expect(document.activeElement).toBe(trigger);
     });
 });
