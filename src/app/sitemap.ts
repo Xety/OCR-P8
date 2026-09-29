@@ -1,3 +1,4 @@
+import type { MetadataRoute } from 'next'
 import { getProperties } from "@/lib/properties/properties";
 import { getPropertyHref } from "@/lib/properties/routes";
 
@@ -11,16 +12,16 @@ const siteUrl = (process.env.SITE_URL || "http://localhost:3000");
  *
  * @returns Un tableau d'objets représentant les URLs du sitemap avec leurs fréquences de changement et priorités.
  */
-export default async function sitemap() {
-    const staticPages = [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+    const staticPages: MetadataRoute.Sitemap = [
         {
             url: siteUrl,
-            changeFrequency: "daily",
+            changeFrequency: 'daily',
             priority: 1,
         },
         {
             url: `${siteUrl}/about`,
-            changeFrequency: "monthly",
+            changeFrequency: 'monthly',
             priority: 0.6,
         },
     ];
@@ -28,11 +29,13 @@ export default async function sitemap() {
     try {
         // Récupère les propriétés depuis l'API
         const properties = await getProperties();
-        const propertyPages = properties.map((property) => ({
-            url: `${siteUrl}${getPropertyHref(property)}`,
-            changeFrequency: "weekly",
-            priority: 0.8,
-        }));
+        const propertyPages: MetadataRoute.Sitemap = properties.map(
+            (property): MetadataRoute.Sitemap[number] => ({
+                url: `${siteUrl}${getPropertyHref(property)}`,
+                changeFrequency: 'weekly',
+                priority: 0.8,
+            }),
+        );
 
         return [...staticPages, ...propertyPages];
     } catch {
