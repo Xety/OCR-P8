@@ -47,7 +47,19 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
             : property.rating_avg.toFixed(1).replace(".", ",");
 
     return (
-        <main className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-10">
+        <main
+            itemScope
+            itemType="https://schema.org/VacationRental"
+            className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-10"
+        >
+            <meta itemProp="identifier" content={property.id} />
+            {pictures.map((picture) => (
+                <meta key={picture} itemProp="image" content={picture} />
+            ))}
+            {property.tags.length > 0 && (
+                <meta itemProp="keywords" content={property.tags.join(", ")} />
+            )}
+
             <Link
                 href="/"
                 className="mt-0 inline-flex rounded-lg bg-[#f3f3f3] px-5 py-3 text-sm text-[#505356] transition-colors hover:bg-[#e9e9e9] lg:ml-1"
@@ -61,23 +73,23 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
 
                     <article className="mt-3 rounded-xl border border-[#ececec] bg-white px-6 py-7 lg:mt-5 lg:px-5">
                         <div className="flex items-start justify-between gap-4">
-                            <h1 className="text-2xl font-medium lg:text-[26px]">{property.title}</h1>
+                            <h1 itemProp="name" className="text-2xl font-medium lg:text-[26px]">{property.title}</h1>
                             <FavoriteButton propertyId={property.id} propertyTitle={property.title} />
                         </div>
                         {property.location && (
-                            <p className="mt-4 flex items-center gap-2 text-sm text-[#65696c]">
+                            <p itemProp="address" className="mt-4 flex items-center gap-2 text-sm text-[#65696c]">
                                 <LocationIcon />
                                 {property.location}
                             </p>
                         )}
 
-                        {property.description && <p className="mt-10 text-sm leading-5">{property.description}</p>}
+                        {property.description && <p itemProp="description" className="mt-10 text-sm leading-5">{property.description}</p>}
 
                         <div className="mt-9 space-y-8">
                             <section aria-labelledby="equipments-title">
                                 <h2 id="equipments-title" className="font-medium">Équipements</h2>
                                 <div className="mt-4">
-                                    <PropertyTags values={property.equipments} />
+                                    <PropertyTags values={property.equipments} asAmenities />
                                 </div>
                             </section>
 
