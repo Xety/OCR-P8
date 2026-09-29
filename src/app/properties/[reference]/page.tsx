@@ -49,7 +49,7 @@ export default async function PropertyPage({ params }: PageProps<"/properties/[r
     return (
         <main
             itemScope
-            itemType="https://schema.org/VacationRental"
+            itemType="https://schema.org/Accommodation"
             className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-10"
         >
             <meta itemProp="identifier" content={property.id} />
