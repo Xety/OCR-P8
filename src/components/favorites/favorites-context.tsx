@@ -84,15 +84,26 @@ function subscribeToFavorites(onChange: () => void) {
         }
     };
 
+    // L'événement storage est émis dans les autres onglets, pas dans celui qui écrit.
     window.addEventListener("storage", onStorage);
+    // L'événement personnalisé est émis dans le même onglet lorsque les favoris sont mis à jour.
     window.addEventListener(FAVORITES_UPDATED_EVENT, onChange);
 
     return () => {
+        // Nettoie les écouteurs d'événements lors d'un désabonnement pour éviter les fuites de mémoire.
         window.removeEventListener("storage", onStorage);
         window.removeEventListener(FAVORITES_UPDATED_EVENT, onChange);
     };
 }
 
+/**
+ * Fournit un contexte pour gérer les favoris, en utilisant le localStorage pour la persistance et en synchronisant entre les onglets.
+ *
+ * @param children Les composants enfants qui auront accès au contexte des favoris.
+ * @param isAuthenticated Indique si l'utilisateur est authentifié, ce qui est nécessaire pour gérer les favoris.
+ *
+ * @returns Un composant Provider qui enveloppe les enfants et leur fournit l'accès au contexte des favoris.
+ */
 export function FavoritesProvider({ children, isAuthenticated }: { children: ReactNode; isAuthenticated: boolean }) {
     // Utilise useSyncExternalStore pour suivre les changements de favoris dans le localStorage et entre les onglets.
     const storedFavorites = useSyncExternalStore(subscribeToFavorites, readStoredFavorites, () => undefined);
